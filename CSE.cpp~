@@ -1,0 +1,18 @@
+#include "CSE.h"
+
+CSE::CSE( Parser * parser )
+{
+   NaryTree * _astTree = *( ( parser -> astTree ) .begin ( ) );
+   root = _astTree -> getRoot();
+
+}
+
+CSE::~CSE()
+{
+    //dtor
+}
+
+void CSE :: preOrder ( int m )
+{
+    root -> PreOrder ( m);
+}

@@ -1,0 +1,50 @@
+#include "Utl.h"
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+   #if 1
+     int c;
+     int option_index = 0;
+     static struct option long_options[] = {
+           {"ast",       required_argument,   0,  'a'},
+           {"list",       required_argument,   0,  'l'},
+           {"st",         required_argument,   0,  's'},
+           {"result", required_argument,   0,  'r'},
+           {0,   0,   0,  0 }
+       };
+    const char *short_opts = "a:l:s:r:";
+    if((c = getopt_long_only(argc, argv, short_opts, long_options, &option_index))!=-1)
+      {
+          switch ( c ) {
+            case 'a' :
+                AstGenerating(optarg);
+                break;
+            case 'l' :
+                cout<<"Toke List:"<<endl;
+                ListGenerating(optarg);
+                break;
+            case 's' :
+                cout<<"standard tree will be complicated in Project 2."<<endl;
+                break;
+            case 'r' :
+                cout<<"CSE and Lambda calculus will be complicated in Project 2."<<endl;
+                break;
+            case '?' :
+                if ( optopt == 'a' || optopt == 'l' || optopt == 's' || optopt == 'r' )
+                    printf("Error: option -%c requires an argument/n", optopt);
+                else if ( isprint(optopt) )
+                    printf("Error: unknown option '-%c'/n", optopt);
+                else
+                    printf("Error: unknown option character '//x%x'/n", optopt);
+                return 1;
+            default :
+		cerr<<"Usage: rpal [-ast] [-l] [-st] [-r] filename"<<endl;
+                abort();
+        }
+   }
+   #endif
+
+    return 0;
+}

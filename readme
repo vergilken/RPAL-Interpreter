@@ -1,0 +1,8 @@
+Tip:1.Environment path for command-line parameter should taken into consideration when running p1.
+Ex: ~user/cop5556/p1 -ast ~/COP5556/tests/trees
+2.This project compiling is based on C++11. 
+3.Makefile has been included in this document, and relative operations has been shown below:
+make     ------- Compiling the project
+make cl  ------- Clean p1 Application 
+make test------- Testing Perl script 'diffresult'
+4.No bugs for all Rpal tests'AST.

@@ -1,5 +1,5 @@
 all: 
-	g++ -std=c++11 main.cpp Parser.cpp Tokens.cpp NaryTree.cpp TreeNode.cpp -o p1
+	g++ -std=c++11 main.cpp Parser.cpp CSE.cpp Tokens.cpp NaryTree.cpp TreeNode.cpp CSE.cpp ELEMENT.cpp -o p1
 cl:
 	rm -f *.o p1
 test:

@@ -65,7 +65,7 @@
 #define TUPLE 50
 #define DELTA 51
 
-
+#define COMPAREERROE 52
 
 
 /************Standardizing Tree Recursive Condition**************/

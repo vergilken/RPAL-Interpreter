@@ -52,6 +52,46 @@ int CSE :: judgeOrOperator( int _type1,  int _type2 )
      else return DUMMY;
  }
 
+ int CSE :: judgeValue ( ELEMENT * var1, ELEMENT * var2  )
+ {
+    if ( var1 -> getType ( ) != var2 -> getType ( )  )  return COMPAREERROE;
+    switch ( var1 -> getType ( ) )
+    {
+    case INTEGER :
+        {
+            if ( ( var1 -> getValue ( ) ).compare ( var2 -> getValue ( ) ) == 0 ) return TRUE;
+            else return FALSE;
+        }
+    case STRING:
+        {
+            if ( ( var1 -> getValue ( ) ).compare ( var2 -> getValue ( ) ) == 0 ) return TRUE;
+            else return FALSE;
+        }
+    case TUPLE:
+        {
+            long m = ( ( dynamic_cast<TupleElement * > ( var1 ) ) ->  getTuple ( ) ).size ( );
+            long n = ( ( dynamic_cast<TupleElement * > ( var2 ) ) ->  getTuple ( ) ).size ( );
+            if ( m != n ) return FALSE;
+
+            auto ivec1 =   ( dynamic_cast<TupleElement * > ( var1 ) ) ->  getTuple ( ) ;
+            auto ivec2 =    ( dynamic_cast<TupleElement * > ( var2 ) ) ->  getTuple ( ) ;
+            auto iter1 = ivec1.begin ( );
+            auto iter2 = ivec2.begin ( );
+
+            while ( iter1 != ivec1.end ( ) )
+            {
+                if ( judgeValue ( *iter1, *iter2  ) == TRUE )
+               {
+                   ++ iter1; ++iter2;
+               }
+               else return FALSE;
+            }
+            return TRUE;
+        }
+        default : return FALSE;
+    }
+ }
+
 CSE::CSE( Parser * parser )
 {
    root = (*( ( parser -> astTree ) .begin ( ) ) )-> getRoot();
@@ -304,6 +344,23 @@ void CSE :: CSE_Machine ( )
             return;
           }
 // Rule 6 and 7: Unary and Binary Operators
+
+      case NEG:
+        {
+          Control.pop_back ( );
+          if ( Stack.back ( ) -> getType ( ) == INTEGER )
+          {
+             long m = ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( -m );
+             return;
+          }
+          else
+          {
+              cout << "Cannot negate non-integer value" <<endl;
+              exit ( 0 );
+          }
+        }
+
       case PLUS:
         {
             Control.pop_back ( );
@@ -572,24 +629,86 @@ void CSE :: CSE_Machine ( )
             return;
         }
 
+        case EQ:
+        {
+            Control.pop_back ( );
+            auto it = Stack.end( ) -1;
+            if (  judgeValue ( *it, *( it-1 )  )  == TRUE )
+            {
+               Stack.pop_back ( );
+               Stack.pop_back ( );
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+               return;
+            }
+            else if ( judgeValue ( *it, *( it-1 )  )  == FALSE )
+            {
+               Stack.pop_back ( );
+               Stack.pop_back ( );
+               ELEMENT * temp = new OperationElement ( FALSE );
+               Stack.push_back ( temp );
+               return;
+            }
+            else
+            {
+                cout << "Illegal Operands for \'eq\'" <<endl;
+                exit ( 0 );
+            }
+        }
 
+          case NE:
+        {
+            Control.pop_back ( );
+            auto it = Stack.end( ) -1;
+            if (  judgeValue ( *it, *( it-1 )  )  == TRUE )
+            {
+               Stack.pop_back ( );
+               Stack.pop_back ( );
+               ELEMENT * temp = new OperationElement ( FALSE );
+               Stack.push_back ( temp );
+               return;
+            }
+            else if ( judgeValue ( *it, *( it-1 )  )  == FALSE )
+            {
+               Stack.pop_back ( );
+               Stack.pop_back ( );
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+               return;
+            }
+            else
+            {
+                cout << "Illegal Operands for \'ne\'" <<endl;
+                exit ( 0 );
+            }
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          case NOT :
+            {
+                Control.pop_back ( );
+                switch ( Stack.back ( ) -> getType ( ) )
+                {
+                case TRUE :
+                    {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( FALSE );
+                    Stack.push_back ( temp );
+                    return;
+                    }
+                case FALSE :
+                    {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( TRUE );
+                    Stack.push_back ( temp );
+                    return;
+                    }
+                default :
+                {
+                  cout << "Non-boolean for \'not\' application"  << endl;
+                  exit ( 0 );
+                }
+                }
+            }
 
 
 

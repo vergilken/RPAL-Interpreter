@@ -19,8 +19,6 @@ int main(int argc, char *argv[])
    cse -> Execute ( );
    cse -> print ( );
 
-   // count e number;
-   //cout<<cse -> count_num ( )<<endl;
    #endif
 
 /****************RPAL Translator********************/

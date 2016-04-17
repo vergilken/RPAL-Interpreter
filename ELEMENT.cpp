@@ -133,7 +133,7 @@ void IdentifierElement :: print ( ) const
 
 void IntegerElement :: print ( ) const
 {
-    cout << "Integer : " << getIntValue ( ) <<endl;
+    cout <<  getIntValue ( ) <<endl;
 }
 
 long IntegerElement :: getIntValue ( ) const
@@ -148,7 +148,7 @@ void IntegerElement :: setIntValue ( long m )
 
 void StringElement :: print ( ) const
 {
-    cout << "\'"<< getValue ( ) <<"\'"<<endl;
+    cout <<  getValue ( ) <<endl;
 }
 
 void DeltaElement :: print ( ) const
@@ -158,6 +158,7 @@ void DeltaElement :: print ( ) const
 
  void OperationElement :: print ( ) const
  {
-     if ( type>=LAMBDA && type<=LET ) cout<< Type[type] <<endl;
+    if ( type>=LAMBDA && type<=LET ) cout<< Type[type] <<endl;
+    else if ( type >= PRINT && type <= CONC ) cout << InnFunctions[type - 53] <<endl;
     else cout << "unknown element"<<endl;
  }

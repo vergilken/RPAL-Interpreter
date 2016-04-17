@@ -57,7 +57,7 @@ void STGenerating(const char * optarg)
         Parser* parser = new Parser(RpalCode);
         parser->getAstTree();
         parser->StandardizeAST();
-        CSE * cse = new CSE ( parser );
+        parser ->PreOrder(0);
         free(RpalCode);
 }
 

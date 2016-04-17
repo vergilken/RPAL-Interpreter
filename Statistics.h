@@ -66,6 +66,16 @@
 #define DELTA 51
 
 #define COMPAREERROE 52
+#define PRINT 53
+#define ITOS 54
+#define ISTRUTHVALUE 55
+#define ISSTRING 56
+#define ISINTEGER 57
+#define ISTUPLE 58
+#define ORDER 59
+#define STERN 60
+#define STEM 61
+#define CONC 62
 
 
 /************Standardizing Tree Recursive Condition**************/
@@ -78,7 +88,7 @@ const string key[]={"let","in","fn","where","aug","or","not","gr","ge","ls","le"
 const char OperatorChar[]={'+','-','*','<','>','&','.','@','/',':','=','~','|','$','!','#','%','^','_','[',']','{','}','`','?','"'};
 const char PunctionChar[]={'.',';','(',')'};
 const char ESCChar[]={'\n',' ','\t','\\'};
-const string InnerFunc [] = {"Print", "ItoS", "Istruthvalue", "Isstring", "Isinteger", "Istuple", "Order", "Stern", "Stem", "Conc"};
+const string InnFunctions [] = {"Print", "ItoS", "Istruthvalue", "Isstring", "Isinteger", "Istuple", "Order", "Stern", "Stem", "Conc"};
 
 
 #endif // STATISTICS_H

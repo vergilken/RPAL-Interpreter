@@ -27,13 +27,6 @@ ELEMENT * TreeNode_To_Element ( TreeNode * node )
     }
 }
 
-bool isInnerFunction ( const string & str )
-{
-    for ( auto temp : InnerFunc )
-       if(temp.compare ( str)) return false;
-    return true;
-}
-
 int CSE :: judgeOrOperator( int _type1,  int _type2 )
 {
     if ( _type1 == FALSE && _type2 == FALSE ) return FALSE;
@@ -233,6 +226,8 @@ void CSE :: CSE_Machine ( )
 
       case GAMMA :
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
 
            switch ( Stack.back ( ) -> getType ( )  )
@@ -245,6 +240,7 @@ void CSE :: CSE_Machine ( )
             ELEMENT * environment = new EnvironmentElement ( (dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getEnvironment ( ) , m );
             Stack.pop_back ( );
             CurrentEnvironment = (dynamic_cast<EnvironmentElement*> (environment) );
+
  // Rule 4 Applying a Lambda-closure
             if ( index -> getType ( ) != COMMA )
             {
@@ -291,27 +287,248 @@ void CSE :: CSE_Machine ( )
             return;
             }
 
+    // InnerFunction:
+           case PRINT:
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) == ENVIRONMENT )
+                {
+                ELEMENT * temp = new OperationElement ( DUMMY );
+                Stack.push_back ( temp );
+                return;
+                }
+                else
+                {
+                Stack.back ( ) -> print ( );
+                Stack.pop_back ( );
+                ELEMENT * temp = new OperationElement ( DUMMY );
+                Stack.push_back ( temp );
+                return;
+                }
+            }
+
+           case ITOS :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) != INTEGER )
+                {
+                    cout << " Invalid ItoS use - Argument is not an Integer" <<endl;
+                    exit ( 0 );
+                }
+                string str = Stack.back ( ) -> getValue ( );
+                Stack.pop_back ( );
+                ELEMENT * temp = new StringElement ( str );
+                Stack.push_back ( temp );
+                return;
+            }
+
+           case ISTRUTHVALUE :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                int type = Stack.back ( ) -> getType ( );
+                if ( type == TRUE || type == FALSE )
+                {
+                 delete Stack.back ( );
+                 Stack.back ( ) = nullptr;
+                 Stack.pop_back ( );
+                ELEMENT * temp = new OperationElement ( TRUE );
+                Stack.push_back ( temp );
+                return;
+                }
+                else
+                {
+                 Stack.pop_back ( );
+                 ELEMENT * temp = new OperationElement ( FALSE );
+                 Stack.push_back ( temp );
+                 return;
+                }
+            }
+
+           case ISSTRING :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) == STRING )
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( TRUE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+                else
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( FALSE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+            }
+
+           case ISINTEGER :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) == INTEGER )
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( TRUE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+                else
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( FALSE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+            }
+
+           case ISTUPLE :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) == TUPLE || Stack.back ( ) -> getType ( ) == NIL )
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( TRUE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+                else
+                {
+                    Stack.pop_back ( );
+                    ELEMENT * temp = new OperationElement ( FALSE );
+                    Stack.push_back ( temp );
+                    return;
+                }
+            }
+
+           case ORDER :
+            {
+                delete Stack.back ( );
+                Stack.back ( ) = nullptr;
+                Stack.pop_back ( );
+                switch ( Stack.back ( ) -> getType ( ) )
+                {
+                case TUPLE :
+                {
+                  ELEMENT * temp = new IntegerElement ( to_string ( ( ( dynamic_cast<TupleElement * > ( Stack.back ( ) ) ) -> getTuple ( ) ).size ( ) ) );
+                  Stack.pop_back ( );
+                  Stack.push_back ( temp );
+                  return;
+                }
+                case NIL :
+                {
+                  ELEMENT * temp = new IntegerElement ( "0" );
+                  Stack.pop_back ( );
+                  Stack.push_back ( temp );
+                  return;
+                }
+                default :
+                {
+                  cout << "Attempt to find the order of a non-tuple" <<endl;
+                  exit ( 0 );
+                }
+                }
+            }
+
+                case STERN:
+                {
+                 delete Stack.back ( );
+                 Stack.back ( ) = nullptr;
+                 Stack.pop_back ( );
+                 if ( Stack.back ( ) -> getType ( ) != STRING )
+                 {
+                     cout << "Invalid Stern use in line 1 - Argument is not a string" <<endl;
+                     exit ( 0 );
+                 }
+                 string str = Stack.back ( ) -> getValue ( );
+                 Stack.pop_back ( );
+                 str.erase ( 0, 1 );
+                 ELEMENT * temp = new StringElement ( str );
+                 Stack.push_back ( temp );
+                 return;
+                }
+
+                case STEM :
+                {
+                delete Stack.back ( );
+                 Stack.back ( ) = nullptr;
+                 Stack.pop_back ( );
+                  if ( Stack.back ( ) -> getType ( ) != STRING )
+                 {
+                     cout << "Invalid Stem use - Argument is not a string" <<endl;
+                     exit ( 0 );
+                 }
+                 string str =  ( ( dynamic_cast<StringElement * > ( Stack.back ( ) ) ) -> getValue ( ) );
+                 Stack.pop_back ( );
+                 str.erase ( 1 );
+                 ELEMENT * temp = new StringElement ( str);
+                 Stack.push_back ( temp );
+                 return;
+                }
+
+                case CONC :
+                {
+                 delete Stack.back ( );
+                 Stack.back ( ) = nullptr;
+                 Stack.pop_back ( );
+                 if ( Stack.back ( ) -> getType ( ) != STRING )
+                 {
+                    cout << "Non-strings used in conc call" <<endl;
+                    exit ( 0 );
+                 }
+                 string str1 = Stack.back ( ) -> getValue ( );
+                 Stack.pop_back ( );
+                if ( Stack.back ( ) -> getType ( ) != STRING )
+                 {
+                    cout << "Non-strings used in conc call" <<endl;
+                    exit ( 0 );
+                 }
+                 string str2 = Stack.back ( ) -> getValue ( );
+                 Stack.pop_back ( );
+                 str2.insert ( 0, str1 );
+                 ELEMENT * temp = new StringElement ( str2 );
+                 Stack.push_back ( temp );
+                 return;
+                }
+
+
+
             default : return;
            }
         }
 
       case IDENTIFIER:
-          {
-             bool m = isInnerFunction( Control.back ( ) -> getValue ( ) );
-             if( m )
+        {
+         for ( int i = 0; i < 10 ; ++i )
+         {
+             if ( Control.back ( ) -> getValue ( ).compare ( InnFunctions [i] ) == 0 )
              {
-                cout<<"innerfunction"<<endl;
-                return;
+               delete Control.back ( );
+               Control.back ( ) = nullptr;
+               Control.pop_back ( );
+               ELEMENT * temp =  new OperationElement ( i + PRINT );
+               Stack.push_back ( temp );
+               return;
              }
+         }
 
 // Rule 1 Stacking a name
-            else
-            {
             ELEMENT * temp = CurrentEnvironment->  getParameter ( Control.back ( ) -> getValue ( ) );
             Stack.push_back ( temp );
             Control.pop_back ( );
             return;
-            }
           }
 
 // Rule 9 ( tuple formation )
@@ -363,6 +580,8 @@ void CSE :: CSE_Machine ( )
 
       case PLUS:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
@@ -376,6 +595,8 @@ void CSE :: CSE_Machine ( )
 
       case MULTIPLY:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
@@ -402,6 +623,8 @@ void CSE :: CSE_Machine ( )
 
       case DIVIDE:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
@@ -415,6 +638,8 @@ void CSE :: CSE_Machine ( )
 
       case POWER:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
@@ -428,6 +653,8 @@ void CSE :: CSE_Machine ( )
 
       case AUG :
         {
+          delete Control.back ( );
+          Control.back ( ) = nullptr;
           Control.pop_back ( );
           if ( Stack.back ( ) -> getType ( ) == NIL )
           {
@@ -454,6 +681,8 @@ void CSE :: CSE_Machine ( )
 
       case OR:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             int type1 = Stack.back ( ) -> getType ( );
             Stack.pop_back ( );
@@ -480,7 +709,9 @@ void CSE :: CSE_Machine ( )
 
       case AND_LOGICAL:
         {
-           Control.pop_back ( );
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
+            Control.pop_back ( );
             int type1 = Stack.back ( ) -> getType ( );
             Stack.pop_back ( );
             int type2 = Stack.back ( ) -> getType ( );
@@ -507,6 +738,8 @@ void CSE :: CSE_Machine ( )
 
       case GR :
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
@@ -538,6 +771,8 @@ void CSE :: CSE_Machine ( )
 
         case GE :
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
@@ -569,6 +804,8 @@ void CSE :: CSE_Machine ( )
 
         case LS :
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
@@ -600,6 +837,8 @@ void CSE :: CSE_Machine ( )
 
         case LE :
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             long num1 = 0, num2= 0;
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
@@ -631,6 +870,8 @@ void CSE :: CSE_Machine ( )
 
         case EQ:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             auto it = Stack.end( ) -1;
             if (  judgeValue ( *it, *( it-1 )  )  == TRUE )
@@ -658,6 +899,8 @@ void CSE :: CSE_Machine ( )
 
           case NE:
         {
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
             auto it = Stack.end( ) -1;
             if (  judgeValue ( *it, *( it-1 )  )  == TRUE )
@@ -685,6 +928,8 @@ void CSE :: CSE_Machine ( )
 
           case NOT :
             {
+                delete Control.back ( );
+                Control.back ( ) = nullptr;
                 Control.pop_back ( );
                 switch ( Stack.back ( ) -> getType ( ) )
                 {

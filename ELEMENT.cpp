@@ -118,6 +118,7 @@ void TupleElement :: print ( ) const
 void TupleElement :: InsertElement ( ELEMENT * temp )
 {
    TupleArray.push_back ( temp );
+   ++ num_tuple;
 }
 
 vector <ELEMENT * > TupleElement :: getTuple ( )
@@ -138,6 +139,11 @@ void IntegerElement :: print ( ) const
 long IntegerElement :: getIntValue ( ) const
 {
     return atol ( value.c_str( ) );
+}
+
+void IntegerElement :: setIntValue ( long m )
+{
+    value = to_string ( m );
 }
 
 void StringElement :: print ( ) const

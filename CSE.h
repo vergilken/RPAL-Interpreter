@@ -10,8 +10,16 @@ class CSE
         void Flatern ( TreeNode * index );
         void Execute ( );
         void print ( );
-        int count_environment_num ( );
-        EnvironmentElement * getCurrentEnvironment ( );
+
+        inline int count_environment_num ( )
+        {
+             return m;
+        };
+
+       inline EnvironmentElement * getCurrentEnvironment ( )
+       {
+            return CurrentEnvironment;
+       };
 
     private:
         TreeNode * root;
@@ -20,6 +28,10 @@ class CSE
         EnvironmentElement * CurrentEnvironment;
         void LeftRecusive ( TreeNode * index );
         void CSE_Machine ( );
+
+        int  judgeOrOperator ( int _type1,  int _type2 );
+        int judgeAndOperator ( int _type1, int _type2 );
+
         int m;
 };
 

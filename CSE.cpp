@@ -34,6 +34,24 @@ bool isInnerFunction ( const string & str )
     return true;
 }
 
+int CSE :: judgeOrOperator( int _type1,  int _type2 )
+{
+    if ( _type1 == FALSE && _type2 == FALSE ) return FALSE;
+    else if  ( _type1== FALSE && _type2 == TRUE ) return TRUE;
+    else if ( _type1 == TRUE && _type2 == FALSE ) return TRUE;
+    else if  ( _type1 == TRUE &&_type2 == TRUE  ) return TRUE;
+    else return DUMMY;
+}
+
+ int CSE :: judgeAndOperator ( int _type1, int _type2 )
+ {
+    if ( _type1 == FALSE && _type2 == FALSE ) return FALSE;
+    else if  ( _type1== FALSE && _type2 == TRUE ) return FALSE;
+    else if ( _type1 == TRUE && _type2 == FALSE ) return FALSE;
+    else if  ( _type1 == TRUE &&_type2 == TRUE  ) return TRUE;
+     else return DUMMY;
+ }
+
 CSE::CSE( Parser * parser )
 {
    root = (*( ( parser -> astTree ) .begin ( ) ) )-> getRoot();
@@ -42,16 +60,6 @@ CSE::CSE( Parser * parser )
    Stack.push_back ( environment );
    CurrentEnvironment = environment;
    m = 0;
-}
-
-int  CSE :: count_environment_num ( )
-{
-    return m;
-}
-
-EnvironmentElement * CSE :: getCurrentEnvironment ( )
-{
-    return CurrentEnvironment;
 }
 
 void CSE :: LeftRecusive ( TreeNode * index )
@@ -237,7 +245,7 @@ void CSE :: CSE_Machine ( )
              vector <ELEMENT * > tempTuple =   ( dynamic_cast<TupleElement*> (Stack.back ( ) ) ) -> getTuple ( );
              Stack.pop_back ( );
              if ( Stack.back ( ) -> getType ( ) != INTEGER ) return;
-             size_t m = stoi ( Stack.back ( ) -> getValue ( ) );
+             size_t m = stol ( Stack.back ( ) -> getValue ( ) );
              Stack.pop_back ( );
              Stack.push_back ( tempTuple.at ( m-1 ) );
             return;
@@ -305,10 +313,7 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-            Stack.pop_back ( );
-            ELEMENT * temp = new IntegerElement ( to_string ( num1 + num2  ) );
-            cout<<Stack.back ( ) -> getValue ( )<<endl;        // 判断下一个是不是3       TAT
-            Stack.push_back ( temp );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 + num2 );
             return;
         }
 
@@ -321,9 +326,7 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-            Stack.pop_back ( );
-            ELEMENT * temp = new IntegerElement ( to_string ( num1 * num2  ) );
-            Stack.push_back ( temp );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 * num2 );
             return;
         }
 
@@ -336,9 +339,7 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-            Stack.pop_back ( );
-            ELEMENT * temp = new IntegerElement ( to_string ( num1 - num2  ) );
-            Stack.push_back ( temp );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 - num2 );
             return;
         }
 
@@ -351,9 +352,7 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-            Stack.pop_back ( );
-            ELEMENT * temp = new IntegerElement ( to_string ( num1 / num2  ) );
-            Stack.push_back ( temp );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 * num2 );
             return;
         }
 
@@ -366,11 +365,216 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-            Stack.pop_back ( );
-            ELEMENT * temp = new IntegerElement ( to_string ( pow ( num1, num2 )  ) );
-            Stack.push_back ( temp );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue (pow ( num1, num2 ) );
             return;
         }
+
+      case AUG :
+        {
+          Control.pop_back ( );
+          if ( Stack.back ( ) -> getType ( ) == NIL )
+          {
+            Stack.pop_back ( );
+            ELEMENT * temp = new TupleElement ( 0 );
+             ( dynamic_cast<TupleElement * >  ( temp ) ) -> InsertElement ( Stack.back ( ) );
+             Stack.pop_back ( );
+             Stack.push_back ( temp );
+             return;
+          }
+         else if  ( Stack.back( ) -> getType ( ) == TUPLE )
+        {
+            auto it = Stack.end ( ) -2;
+           ( dynamic_cast<TupleElement * > (Stack.back ( ) ) ) -> InsertElement ( * it );
+           Stack.erase ( it );
+           return;
+        }
+        else
+        {
+            cerr << "aug operation error."<<endl;
+            return;
+        }
+    }
+
+      case OR:
+        {
+            Control.pop_back ( );
+            int type1 = Stack.back ( ) -> getType ( );
+            Stack.pop_back ( );
+            int type2 = Stack.back ( ) -> getType ( );
+            Stack.pop_back ( );
+            int temp =  judgeOrOperator( type1, type2 );
+            if ( temp == FALSE )
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            else if ( temp == TRUE )
+            {
+                ELEMENT * temp = new OperationElement ( TRUE );
+                Stack.push_back ( temp );
+            }
+            else if ( temp == DUMMY )
+            {
+                cout << "Invalid value used in logical expression \'or\'" <<endl;
+                exit ( 0 );
+            }
+            return;
+        }
+
+      case AND_LOGICAL:
+        {
+           Control.pop_back ( );
+            int type1 = Stack.back ( ) -> getType ( );
+            Stack.pop_back ( );
+            int type2 = Stack.back ( ) -> getType ( );
+            Stack.pop_back ( );
+            int temp =  judgeAndOperator( type1, type2 );
+            if ( type1 == ENVIRONMENT && type2 == ENVIRONMENT ) return;
+             if ( temp == FALSE )
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            else if ( temp == TRUE )
+            {
+                ELEMENT * temp = new OperationElement ( TRUE );
+                Stack.push_back ( temp );
+            }
+            else if ( temp == DUMMY )
+            {
+                cout << "Invalid value used in logical expression \'&\'" <<endl;
+                exit ( 0 );
+            }
+            return;
+        }
+
+      case GR :
+        {
+            Control.pop_back ( );
+            long num1 = 0, num2= 0;
+            if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'gr\'"<<endl;
+                exit ( 0 );
+            }
+            num1 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back ( );
+              if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'gr\'"<<endl;
+                exit ( 0 );
+            }
+            num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back (  );
+            if ( num1 > num2 )
+            {
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+            }
+            else
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            return;
+        }
+
+        case GE :
+        {
+            Control.pop_back ( );
+            long num1 = 0, num2= 0;
+            if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'ge\'"<<endl;
+                exit ( 0 );
+            }
+            num1 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back ( );
+              if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'ge\'"<<endl;
+                exit ( 0 );
+            }
+            num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back (  );
+            if ( num1 >= num2 )
+            {
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+            }
+            else
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            return;
+        }
+
+        case LS :
+        {
+            Control.pop_back ( );
+            long num1 = 0, num2= 0;
+            if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'ls\'"<<endl;
+                exit ( 0 );
+            }
+            num1 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back ( );
+              if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'ls\'"<<endl;
+                exit ( 0 );
+            }
+            num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back (  );
+            if ( num1 < num2 )
+            {
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+            }
+            else
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            return;
+        }
+
+        case LE :
+        {
+            Control.pop_back ( );
+            long num1 = 0, num2= 0;
+            if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'le\'"<<endl;
+                exit ( 0 );
+            }
+            num1 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back ( );
+              if ( Stack.back ( ) -> getType ( ) !=  INTEGER )
+            {
+                cerr << "Illegal Operands for \'le\'"<<endl;
+                exit ( 0 );
+            }
+            num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
+            Stack.pop_back (  );
+            if ( num1 <= num2 )
+            {
+               ELEMENT * temp = new OperationElement ( TRUE );
+               Stack.push_back ( temp );
+            }
+            else
+            {
+                ELEMENT * temp = new OperationElement ( FALSE );
+                Stack.push_back ( temp );
+            }
+            return;
+        }
+
+
+
+
 
 
 
@@ -395,6 +599,8 @@ void CSE :: CSE_Machine ( )
           //end of operator
       default :
          {
+            Stack.push_back ( Control.back ( ) );
+            Control.pop_back ( );
             return;
         }
 

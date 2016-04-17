@@ -109,6 +109,7 @@ class IntegerElement : public ELEMENT
         ~IntegerElement ( ) { };
        void print ( ) const override;
        long getIntValue ( ) const;
+       void setIntValue ( long m  ) ;
 };
 
 class StringElement : public ELEMENT

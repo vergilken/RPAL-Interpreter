@@ -18,12 +18,12 @@ string ELEMENT :: getValue ( ) const
 
 void ELEMENT :: print ( ) const
 {
-    cout << "element" << endl;
+    cout << "element" ;
 }
 
 void EnvironmentElement :: print ( ) const
 {
-    cout << "environment : " << id <<endl;
+    cout << "environment : " << id ;
 }
 
 void EnvironmentElement :: InsertParameter ( string  str, ELEMENT * element )
@@ -77,7 +77,7 @@ void LambdaElement :: setEnvironment ( EnvironmentElement * currentEnvironment )
 
 void LambdaElement :: print ( ) const
 {
-    cout << "lambda closure" << endl;
+    cout << "lambda closure" ;
 }
 
 EnvironmentElement * LambdaElement :: getEnvironment ( )
@@ -97,7 +97,7 @@ TreeNode * LambdaElement :: getParameter ( )
 
 void RecElement :: print ( ) const
 {
-   cout << "rec "<<endl;
+   cout << "rec ";
 }
 
 int TauElement :: get_Num_Tuple ( )
@@ -107,12 +107,21 @@ int TauElement :: get_Num_Tuple ( )
 
 void TauElement :: print ( ) const
 {
-    cout<<"tau"<<endl;
+    cout<<"tau";
 }
 
 void TupleElement :: print ( ) const
 {
-    cout<<"tuple"<<endl;
+    cout<<"(";
+    auto iter =  TupleArray.begin ( );
+    (*iter) -> print ( );
+    ++ iter;
+    for ( ; iter != TupleArray.end ( ) ; ++iter )
+    {
+        cout << ", ";
+        (*iter) -> print ( );
+    }
+    cout<<")";
 }
 
 void TupleElement :: InsertElement ( ELEMENT * temp )
@@ -128,12 +137,12 @@ vector <ELEMENT * > TupleElement :: getTuple ( )
 
 void IdentifierElement :: print ( ) const
 {
-    cout << "Identifier :"<< getValue ( ) <<endl;
+    cout << "Identifier :"<< getValue ( ) ;
 }
 
 void IntegerElement :: print ( ) const
 {
-    cout <<  getIntValue ( ) <<endl;
+    cout <<  getIntValue ( ) ;
 }
 
 long IntegerElement :: getIntValue ( ) const
@@ -148,17 +157,17 @@ void IntegerElement :: setIntValue ( long m )
 
 void StringElement :: print ( ) const
 {
-    cout <<  getValue ( ) <<endl;
+    cout <<  getValue ( ) ;
 }
 
 void DeltaElement :: print ( ) const
 {
-    cout<<"delta"<<endl;
+    cout<<"delta";
 }
 
  void OperationElement :: print ( ) const
  {
-    if ( type>=LAMBDA && type<=LET ) cout<< Type[type] <<endl;
-    else if ( type >= PRINT && type <= CONC ) cout << InnFunctions[type - 53] <<endl;
-    else cout << "unknown element"<<endl;
+    if ( type>=LAMBDA && type<=LET ) cout<< Type[type] ;
+    else if ( type >= PRINT && type <= CONC ) cout << InnFunctions[type - 53] ;
+    else cout << "unknown element";
  }

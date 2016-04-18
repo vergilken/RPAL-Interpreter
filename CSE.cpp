@@ -165,12 +165,14 @@ void CSE :: print ( )
     for ( ; iter_control != Control.end ( ); ++iter_control )
     {
         (*iter_control) -> print ( );
+        cout<<endl;
     }
     cout<<endl;
    cout<<"** STACK **:"<<endl;
     for ( ; iter_stack != Stack.begin ( ) -1; --iter_stack )
     {
         (*iter_stack) -> print ( );
+        cout<<endl;
     }
 }
 

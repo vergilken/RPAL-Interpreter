@@ -1,5 +1,5 @@
-let Plus x y  = x + y +x
+let Plus x y = x + y 
 in
 let Plus3 = Plus 3
 in
-Print ( Plus3 4 )
+Print(Plus3 4)

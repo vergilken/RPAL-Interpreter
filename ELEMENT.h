@@ -30,6 +30,10 @@ class EnvironmentElement : public ELEMENT
         bool hasFather ( );
         EnvironmentElement * getFather ( );
         void printParameters ( );
+        inline int count_environment_num ( )
+        {
+             return id;
+        };
 
     protected:
         map<string , ELEMENT *> parameter;
@@ -99,6 +103,9 @@ class IdentifierElement : public ELEMENT
         IdentifierElement ( string  _value ) : ELEMENT ( IDENTIFIER,  _value ) { };
         ~IdentifierElement ( ) { };
         void print ( ) const override;
+        void setKey ( bool m );
+    protected :
+        bool key;
 };
 
 class IntegerElement : public ELEMENT
@@ -125,11 +132,13 @@ class DeltaElement : public ELEMENT
 {
     public :
         DeltaElement ( ) = default;
-        DeltaElement ( TreeNode * _location_of_opt ) : ELEMENT ( DELTA ), location_of_opt ( _location_of_opt) { };
+        DeltaElement ( TreeNode * _location_of_opt, int _option ) : ELEMENT ( DELTA ), location_of_opt ( _location_of_opt), option ( _option ) { };
         ~DeltaElement ( ) { };
         void print ( ) const override;
+        int getOption ( ) const;
     protected :
         TreeNode * location_of_opt;
+        int option;
 };
 
 class OperationElement : public ELEMENT

@@ -29,6 +29,7 @@ class CSE
         void LeftRecusive ( TreeNode * index );
         void CSE_Machine ( );
 
+        EnvironmentElement * getStackEnvironment ( );
         int  judgeOrOperator ( int _type1,  int _type2 );
         int judgeAndOperator ( int _type1, int _type2 );
         int judgeValue ( ELEMENT * var1, ELEMENT * var2  );

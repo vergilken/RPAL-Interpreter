@@ -27,6 +27,13 @@ ELEMENT * TreeNode_To_Element ( TreeNode * node )
     }
 }
 
+EnvironmentElement * CSE :: getStackEnvironment ( )
+{
+    auto it = Stack.end ( );
+    while ( (*it) -> getType ( ) != ENVIRONMENT ) --it;
+    return ( dynamic_cast<EnvironmentElement * > ( * it ) );
+}
+
 int CSE :: judgeOrOperator( int _type1,  int _type2 )
 {
     if ( _type1 == FALSE && _type2 == FALSE ) return FALSE;
@@ -109,11 +116,11 @@ void CSE :: LeftRecusive ( TreeNode * index )
     }
   case TERNERY :
     {
-      DeltaElement * Then = new DeltaElement ( index -> LeftChild -> RightSibling );
-      DeltaElement * Else = new DeltaElement ( index -> LeftChild -> RightSibling -> RightSibling );
+      DeltaElement * Then = new DeltaElement ( index -> LeftChild -> RightSibling, THEN );
+      DeltaElement * Else = new DeltaElement ( index -> LeftChild -> RightSibling -> RightSibling, ELSE );
       Control.push_back ( Then );
       Control.push_back ( Else );
-      OperationElement * belta = new OperationElement ( BELTA );
+      OperationElement * belta = new OperationElement ( BETA );
       Control.push_back ( belta );
       LeftRecusive( index -> LeftChild );
       LeftRecusive( index -> RightSibling );
@@ -161,6 +168,8 @@ void CSE :: print ( )
 {
     auto iter_control = Control.begin ( );
     auto iter_stack = Stack.end( ) - 1;
+    cout <<endl;
+    //cout<<"Current Environment is " << count_environment_num ( ) <<endl;
     cout<< "** CONTROL ** :" << endl;
     for ( ; iter_control != Control.end ( ); ++iter_control )
     {
@@ -183,16 +192,13 @@ void CSE :: Execute ( )
     cout<<endl;
     cout<<"*****************"<<endl;
 
-   int  count_num = 1;
     while ( !Control.empty ( ) )
     {
       CSE_Machine ( );
-      ++count_num;
       print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
     }
-    cout<< count_num <<" Elements have been executed."<<endl;
 }
 
 #if 1
@@ -203,13 +209,27 @@ void CSE :: CSE_Machine ( )
        case ENVIRONMENT :
         {
             int num = ( dynamic_cast<EnvironmentElement*> (Control.back ( ) ) ) ->getID ( );
+            if( num == 0 )
+            {
+                 for ( auto it = Stack.begin ( ); it != Stack.end ( );  )
+            {
+                 if ( (*it) -> getType ( ) == ENVIRONMENT && ( dynamic_cast<EnvironmentElement*> ( *it ) ) ->getID ( ) == num  )
+                {
+                    Control.pop_back ( );
+                    Stack.erase ( it );
+                    return;
+                }
+                else
+                    ++it;
+            }
+            }
             for ( auto it = Stack.begin ( ); it != Stack.end ( );  )
             {
                  if ( (*it) -> getType ( ) == ENVIRONMENT && ( dynamic_cast<EnvironmentElement*> ( *it ) ) ->getID ( ) == num  )
                 {
-                    CurrentEnvironment = ( dynamic_cast<EnvironmentElement*> ( *it ) )  -> getFather ( ) ;
                     Control.pop_back ( );
                     Stack.erase ( it );
+                    CurrentEnvironment = getStackEnvironment ( );
                     return;
                 }
                 else
@@ -236,10 +256,10 @@ void CSE :: CSE_Machine ( )
            {
            case LAMBDA:
             {
-             ++m;
+             cout<<"The lambda environment is  " <<m<<endl;
             TreeNode * index =  ( dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getParameter ( );
             if ( index == nullptr ) return;
-            ELEMENT * environment = new EnvironmentElement ( (dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getEnvironment ( ) , m );
+            ELEMENT * environment = new EnvironmentElement ( (dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getEnvironment ( ) , ++ m );
             Stack.pop_back ( );
             CurrentEnvironment = (dynamic_cast<EnvironmentElement*> (environment) );
 
@@ -507,14 +527,24 @@ void CSE :: CSE_Machine ( )
 
 
 
+
             default : return;
            }
         }
 
       case IDENTIFIER:
         {
-         for ( int i = 0; i < 10 ; ++i )
+         ELEMENT * temp = CurrentEnvironment->  getParameter ( Control.back ( ) -> getValue ( ) );
+         if ( temp != nullptr)
          {
+          Stack.push_back ( temp );
+          Control.pop_back ( );
+          return;
+         }
+         else if (temp == nullptr )
+         {
+            for ( int i = 0; i < 10 ; ++i )
+          {
              if ( Control.back ( ) -> getValue ( ).compare ( InnFunctions [i] ) == 0 )
              {
                delete Control.back ( );
@@ -525,12 +555,14 @@ void CSE :: CSE_Machine ( )
                return;
              }
          }
+          cout<<"Unknown id"<<endl;
+          exit ( 0 );
+        }
+
 
 // Rule 1 Stacking a name
-            ELEMENT * temp = CurrentEnvironment->  getParameter ( Control.back ( ) -> getValue ( ) );
-            Stack.push_back ( temp );
-            Control.pop_back ( );
-            return;
+
+
           }
 
 // Rule 9 ( tuple formation )
@@ -634,7 +666,7 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 * num2 );
+             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 / num2 );
             return;
         }
 
@@ -955,6 +987,23 @@ void CSE :: CSE_Machine ( )
                   exit ( 0 );
                 }
                 }
+            }
+
+          case BETA :
+           {
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
 
 

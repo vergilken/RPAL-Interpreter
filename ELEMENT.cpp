@@ -36,12 +36,14 @@ ELEMENT *  EnvironmentElement :: getParameter ( string str)
    auto l_it = parameter.begin ( );
    l_it=parameter.find(str);
    if( l_it == parameter.end ( ) && hasFather ( ) )
-    return  father ->getParameter(str);
-   else if ( l_it == parameter.end ( ) && !hasFather ( )  )
    {
-       l_it = parameter.begin( );
-       return l_it -> second;
+           cout<<"Current Environment is " << count_environment_num ( ) <<endl;
+           cout<<"The father id is " << father -> count_environment_num ( ) <<endl;
+           return  father ->getParameter(str);
    }
+
+   else if ( l_it == parameter.end ( ) && !hasFather ( )  )
+    return nullptr;
    return l_it -> second;
 }
 
@@ -135,6 +137,11 @@ vector <ELEMENT * > TupleElement :: getTuple ( )
     return TupleArray;
 }
 
+void IdentifierElement :: setKey ( bool m )
+{
+    key = m;
+}
+
 void IdentifierElement :: print ( ) const
 {
     cout << "Identifier :"<< getValue ( ) ;
@@ -160,6 +167,11 @@ void StringElement :: print ( ) const
     cout <<  getValue ( ) ;
 }
 
+int DeltaElement :: getOption ( ) const
+{
+    return option;
+}
+
 void DeltaElement :: print ( ) const
 {
     cout<<"delta";
@@ -167,7 +179,62 @@ void DeltaElement :: print ( ) const
 
  void OperationElement :: print ( ) const
  {
-    if ( type>=LAMBDA && type<=LET ) cout<< Type[type] ;
-    else if ( type >= PRINT && type <= CONC ) cout << InnFunctions[type - 53] ;
-    else cout << "unknown element";
+    if ( type>=TAU && type<=GAMMA )
+    {
+        cout<< Type[type] ;
+        return;
+    }
+    else if ( type >= PRINT && type <= CONC )
+    {
+        cout << InnFunctions[type - 53] ;
+        return;
+    }
+    switch ( type )
+    {
+    case BETA :
+        {
+            cout << "BETA";
+            return;
+        }
+    case DELTA :
+        {
+            cout << "DELTA";
+            return;
+        }
+    case THEN :
+        {
+            cout << "THEN";
+            return;
+        }
+    case ELSE :
+        {
+            cout << "ELSE";
+            return;
+        }
+    case NIL :
+        {
+            cout<<"nil";
+            return;
+        }
+    case TRUE :
+        {
+            cout << "true";
+            return;
+        }
+    case FALSE :
+        {
+            cout << "false";
+            return;
+        }
+    case DUMMY :
+        {
+            cout << "dummy";
+            return;
+        }
+    default :
+        {
+          cout << "unknown element";
+          return;
+        }
+    }
  }

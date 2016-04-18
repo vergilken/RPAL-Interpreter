@@ -58,7 +58,7 @@
 #define ENDOFRPALFILE 44
 #define OPERATOR 45
 
-#define BELTA  46
+#define BETA  46
 #define THEN 47
 #define ELSE 48
 #define ENVIRONMENT 49

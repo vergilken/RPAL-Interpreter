@@ -80,7 +80,10 @@ void LambdaElement :: setEnvironment ( EnvironmentElement * currentEnvironment )
 
 void LambdaElement :: print ( ) const
 {
-    cout << "[lambda closure: x: 2]" ;
+   if ( LambdaLocation -> getLeftChild ( ) -> getType ( ) ==COMMA )
+    cout << "[lambda closure: (null): 2]" ;
+   else
+    cout << "[lambda closure: "<< LambdaLocation -> getLeftChild ( ) -> getValue ( ) <<": 2]" ;
 }
 
 EnvironmentElement * LambdaElement :: getEnvironment ( )

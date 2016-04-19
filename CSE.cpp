@@ -109,18 +109,18 @@ void CSE :: LeftRecusive ( TreeNode * index )
   {
   case LAMBDA :
     {
-      LambdaElement *  temp = new LambdaElement ( index, CurrentEnvironment );
+      ELEMENT *  temp = new LambdaElement ( index, CurrentEnvironment );
       Control.push_back ( temp );
       LeftRecusive( index ->RightSibling );
       return;
     }
   case TERNERY :
     {
-      DeltaElement * Then = new DeltaElement ( index -> LeftChild -> RightSibling, THEN );
-      DeltaElement * Else = new DeltaElement ( index -> LeftChild -> RightSibling -> RightSibling, ELSE );
+      ELEMENT * Then = new DeltaElement ( index -> LeftChild -> RightSibling, THEN );
+      ELEMENT * Else = new DeltaElement ( index -> LeftChild -> RightSibling -> RightSibling, ELSE );
       Control.push_back ( Then );
       Control.push_back ( Else );
-      OperationElement * beta = new OperationElement ( BETA );
+      ELEMENT* beta = new OperationElement ( BETA );
       Control.push_back ( beta );
       TreeNode * temp = index -> LeftChild -> RightSibling ;
       index -> LeftChild -> RightSibling = nullptr;
@@ -132,7 +132,7 @@ void CSE :: LeftRecusive ( TreeNode * index )
   case TAU :
     {
       int num = index ->Num_Child ( );
-      TauElement * Tau = new TauElement ( num );
+      ELEMENT * Tau = new TauElement ( num );
       Control.push_back ( Tau );
       LeftRecusive( index -> LeftChild );
       LeftRecusive( index -> RightSibling );
@@ -591,24 +591,24 @@ void CSE :: CSE_Machine ( )
           cout<<"Undeclared Identifier <"<<Control.back ( ) -> getValue ( ) <<">" <<endl;
           exit ( 0 );
         }
-
-
-// Rule 1 Stacking a name
-
-
-          }
+    }
 
 // Rule 9 ( tuple formation )
       case TAU:
         {
             if ( ( dynamic_cast<TauElement * > (Control.back ( ) ) ) -> get_Num_Tuple ( ) == 0 )
            {
+               delete Control.back ( );
+               Control.back ( ) = nullptr;
+               Control.pop_back ( );
                ELEMENT * temp = new OperationElement ( NIL );
                Stack.push_back ( temp );
                return;
             }
             int temp = ( dynamic_cast<TauElement * > (Control.back ( ) ) ) -> get_Num_Tuple ( ) ;
-            ELEMENT * temp_tuple = new TupleElement ( temp );
+            ELEMENT * temp_tuple = new TupleElement ( 0 );
+            delete Control.back ( );
+            Control.back ( ) = nullptr;
             Control.pop_back ( );
              for ( int i = 0; i < temp ; ++i )
              {

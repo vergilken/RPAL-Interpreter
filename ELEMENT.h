@@ -1,3 +1,4 @@
+#include <sstream>
 #include "Parser.h"
 
 class ELEMENT

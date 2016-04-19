@@ -37,13 +37,14 @@ ELEMENT *  EnvironmentElement :: getParameter ( string str)
    l_it=parameter.find(str);
    if( l_it == parameter.end ( ) && hasFather ( ) )
    {
-           cout<<"Current Environment is " << count_environment_num ( ) <<endl;
-           cout<<"The father id is " << father -> count_environment_num ( ) <<endl;
+           //cout<<"Current Environment is " << count_environment_num ( ) <<endl;
+           //cout<<"The father id is " << father -> count_environment_num ( ) <<endl;
            return  father ->getParameter(str);
    }
 
    else if ( l_it == parameter.end ( ) && !hasFather ( )  )
-    return nullptr;
+          return nullptr;
+
    return l_it -> second;
 }
 
@@ -79,7 +80,7 @@ void LambdaElement :: setEnvironment ( EnvironmentElement * currentEnvironment )
 
 void LambdaElement :: print ( ) const
 {
-    cout << "lambda closure" ;
+    cout << "[lambda closure: x: 2]" ;
 }
 
 EnvironmentElement * LambdaElement :: getEnvironment ( )
@@ -114,7 +115,7 @@ int TauElement :: get_Num_Tuple ( )
 
 void TauElement :: print ( ) const
 {
-    cout<<"tau";
+    cout<<"tau :" <<num_tuple;
 }
 
 void TupleElement :: print ( ) const
@@ -169,7 +170,30 @@ void IntegerElement :: setIntValue ( long m )
 
 void StringElement :: print ( ) const
 {
-    cout <<  getValue ( ) ;
+ string str = getValue ( );
+ auto it = str.begin ( );
+ for ( ; it != str.end ( ); ++it )
+ {
+     if ( *it == '\\' && *( it +1 ) == 'n' )
+        {
+             cout<<endl;
+             ++it;
+             continue;
+        }
+    else if ( *it == '\\' && * ( it +1 ) == 't' )
+    {
+        printf ("\t");
+        ++it;
+        continue;
+    }
+    else if ( *it == '\\' && * ( it +1 )  == 'r'  )
+    {
+        cout<< endl;
+        ++it;
+        continue;
+    }
+       cout<<*it;
+ }
 }
 
 int DeltaElement :: getOption ( ) const

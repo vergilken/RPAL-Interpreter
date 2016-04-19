@@ -5,24 +5,23 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 /******Test single Rpal programming******/
- #if 1
+ #if 0
     cout << "Hello world!" << endl;
     FILE *RpalCode = fopen("democode","r");
 
    Parser* parser = new Parser(RpalCode);
    parser->getAstTree();
    parser -> StandardizeAST ( );
-   parser ->PreOrder(0);
+   //parser ->PreOrder(0);
    cout<<endl;
    cout<<"***************"<<endl;
    CSE * cse = new CSE ( parser );
    cse -> Execute ( );
-   cse -> print ( );
 
    #endif
 
 /****************RPAL Translator********************/
-   #if 0
+   #if 1
      int c;
      int option_index = 0;
      static struct option long_options[] = {
@@ -46,7 +45,7 @@ int main(int argc, char *argv[])
                 STGenerating(optarg);
                 break;
             case 'r' :
-                cout<<"CSE and Lambda Calculus will be complicated in Project 2."<<endl;
+                ResultGenerating ( optarg );
                 break;
             case '?' :
                 if ( optopt == 'a' || optopt == 'l' || optopt == 's' || optopt == 'r' )

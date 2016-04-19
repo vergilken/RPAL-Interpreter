@@ -191,17 +191,23 @@ void CSE :: print ( )
 void CSE :: Execute ( )
 {
     Flatern( root );
+    #if 0
     print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
+    #endif
 
     while ( !Control.empty ( ) )
     {
       CSE_Machine ( );
-      print ( );
+    #if 0
+    print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
+    #endif
     }
+    if ( Control.empty ( ) )
+        cout <<" ";
 }
 
 #if 1
@@ -259,7 +265,7 @@ void CSE :: CSE_Machine ( )
            {
            case LAMBDA:
             {
-             cout<<"The lambda environment is  " <<m<<endl;
+             //cout<<"The lambda environment is  " <<m<<endl;
             TreeNode * index =  ( dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getParameter ( );
             if ( index == nullptr ) return;
             ELEMENT * environment = new EnvironmentElement ( (dynamic_cast<LambdaElement*> (Stack.back ( ) ) ) -> getEnvironment ( ) , ++ m );
@@ -293,7 +299,6 @@ void CSE :: CSE_Machine ( )
 
             Stack.push_back ( environment );
             Control.push_back ( environment );
-            cout<<endl;
 
             if ( index -> getRightSibling ( ) != nullptr)
             Flatern ( index -> getRightSibling ( ) );
@@ -556,10 +561,6 @@ void CSE :: CSE_Machine ( )
                  Stack.push_back ( ( dynamic_cast<RecElement * > (Stack.back ( ) ) ) -> getLambda ( ) );
                  return;
                }
-
-
-
-
             default : return;
            }
         }
@@ -600,7 +601,12 @@ void CSE :: CSE_Machine ( )
 // Rule 9 ( tuple formation )
       case TAU:
         {
-            if ( ( dynamic_cast<TauElement * > (Control.back ( ) ) ) -> get_Num_Tuple ( ) == 0 ) return;
+            if ( ( dynamic_cast<TauElement * > (Control.back ( ) ) ) -> get_Num_Tuple ( ) == 0 )
+           {
+               ELEMENT * temp = new OperationElement ( NIL );
+               Stack.push_back ( temp );
+               return;
+            }
             int temp = ( dynamic_cast<TauElement * > (Control.back ( ) ) ) -> get_Num_Tuple ( ) ;
             ELEMENT * temp_tuple = new TupleElement ( temp );
             Control.pop_back ( );
@@ -1056,18 +1062,12 @@ void CSE :: CSE_Machine ( )
                 temp -> RightSibling = temp1;
                 return;
              }
-
              else
              {
                 cout << "Non-boolean result used in conditional" << endl;
                 exit ( 0 );
              }
             }
-
-
-
-
-
 
           //end of operator
       default :
@@ -1076,7 +1076,6 @@ void CSE :: CSE_Machine ( )
             Control.pop_back ( );
             return;
         }
-
       }
     }
     #endif

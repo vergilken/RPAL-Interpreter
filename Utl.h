@@ -61,6 +61,24 @@ void STGenerating(const char * optarg)
         free(RpalCode);
 }
 
+void ResultGenerating ( const char * optarg )
+{
+         FILE *RpalCode ;
+        const char* FilePtr= optarg;
+        RpalCode = fopen(FilePtr,"r");
+        if(RpalCode==nullptr)
+        {
+           cerr<<"This file "<< optarg<< " does not exist."<<endl;
+           exit(1);
+        }
+        Parser* parser = new Parser(RpalCode);
+        parser->getAstTree();
+        parser->StandardizeAST();
+        CSE * cse = new CSE ( parser );
+        cse -> Execute ( );
+        free(RpalCode);
+}
+
 #endif
 
 #endif // UTL_H

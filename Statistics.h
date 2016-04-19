@@ -76,7 +76,8 @@
 #define STERN 60
 #define STEM 61
 #define CONC 62
-#define RECELEMENT 63
+#define NULLFUNCTION 63
+#define RECELEMENT 64
 
 
 
@@ -90,7 +91,7 @@ const string key[]={"let","in","fn","where","aug","or","not","gr","ge","ls","le"
 const char OperatorChar[]={'+','-','*','<','>','&','.','@','/',':','=','~','|','$','!','#','%','^','_','[',']','{','}','`','?','"'};
 const char PunctionChar[]={'.',';','(',')'};
 const char ESCChar[]={'\n',' ','\t','\\'};
-const string InnFunctions [] = {"Print", "ItoS", "Istruthvalue", "Isstring", "Isinteger", "Istuple", "Order", "Stern", "Stem", "Conc"};
+const string InnFunctions [] = {"Print", "ItoS", "Istruthvalue", "Isstring", "Isinteger", "Istuple", "Order", "Stern", "Stem", "Conc", "Null"};
 
 
 #endif // STATISTICS_H

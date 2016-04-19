@@ -3,6 +3,6 @@ all:
 cl:
 	rm -f *.o p1
 test:
-	perl ./difftest.pl -1 "./rpal FILE" -2 "./p1 -r FILE" -t ./tests/
+	perl ./difftest.pl -1 "./rpal FILE" -2 "./p1 FILE" -t ./tests/
 
 

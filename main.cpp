@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
                 break;
             case 'r' :
                 ResultGenerating ( optarg );
-                break;
+		cout << endl;
+                return 0;
             case '?' :
                 if ( optopt == 'a' || optopt == 'l' || optopt == 's' || optopt == 'r' )
                     cout<<"Argument missing."<<endl;
@@ -56,8 +57,14 @@ int main(int argc, char *argv[])
             default :
                 abort();
         }
+	cout<<endl;
+   }
+   else 
+   {
+    ResultGenerating ( argv[1] );
+    cout << endl;
+    return 0;
    }
    #endif
 
-    return 0;
 }

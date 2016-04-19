@@ -4,6 +4,23 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+/******Test single Rpal programming******/
+ #if 0
+    cout << "Hello world!" << endl;
+    FILE *RpalCode = fopen("democode","r");
+
+   Parser* parser = new Parser(RpalCode);
+   parser->getAstTree();
+   parser -> StandardizeAST ( );
+   //parser ->PreOrder(0);
+   cout<<endl;
+   cout<<"***************"<<endl;
+   CSE * cse = new CSE ( parser );
+   cse -> Execute ( );
+
+   #endif
+
+/****************RPAL Translator********************/
    #if 1
      int c;
      int option_index = 0;
@@ -22,27 +39,31 @@ int main(int argc, char *argv[])
                 AstGenerating(optarg);
                 break;
             case 'l' :
-                cout<<"Toke List:"<<endl;
                 ListGenerating(optarg);
                 break;
             case 's' :
-                cout<<"standard tree will be complicated in Project 2."<<endl;
+                STGenerating(optarg);
                 break;
             case 'r' :
-                cout<<"CSE and Lambda calculus will be complicated in Project 2."<<endl;
-                break;
+                ResultGenerating ( optarg );
+		cout << endl;
+                return 0;
             case '?' :
                 if ( optopt == 'a' || optopt == 'l' || optopt == 's' || optopt == 'r' )
-                    printf("Error: option -%c requires an argument/n", optopt);
-                else if ( isprint(optopt) )
-                    printf("Error: unknown option '-%c'/n", optopt);
+                    cout<<"Argument missing."<<endl;
                 else
-                    printf("Error: unknown option character '//x%x'/n", optopt);
+                    cout<<"Usage: p1 [-ast] [-l] [-st] [-r] FILE"<<endl;
                 return 1;
             default :
-		cerr<<"Usage: rpal [-ast] [-l] [-st] [-r] filename"<<endl;
                 abort();
         }
+	cout<<endl;
+   }
+   else 
+   {
+    
+
+
    }
    #endif
 

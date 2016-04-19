@@ -2,10 +2,10 @@
 #define UTL_H
 #include <string.h>
 #include <getopt.h>
-#include "Parser.h"
 #include "Tokens.h"
+#include "CSE.h"
 
-#if 0
+#if 1
 void AstGenerating(const char * optarg)
 {
         FILE *RpalCode ;
@@ -37,11 +37,45 @@ void ListGenerating(const char* optarg)
         int type=0;
         while(true)
        {
-             int type = 0;
              str=scanner(RpalCode, type);
              if(type == ENDOFRPALFILE)break;
              cout<<str<<endl;
         }
+        free(RpalCode);
+}
+
+void STGenerating(const char * optarg)
+{
+        FILE *RpalCode ;
+        const char* FilePtr= optarg;
+        RpalCode = fopen(FilePtr,"r");
+        if(RpalCode==nullptr)
+        {
+           cerr<<"This file "<< optarg<< " does not exist."<<endl;
+           exit(1);
+        }
+        Parser* parser = new Parser(RpalCode);
+        parser->getAstTree();
+        parser->StandardizeAST();
+        parser ->PreOrder(0);
+        free(RpalCode);
+}
+
+void ResultGenerating ( const char * optarg )
+{
+         FILE *RpalCode ;
+        const char* FilePtr= optarg;
+        RpalCode = fopen(FilePtr,"r");
+        if(RpalCode==nullptr)
+        {
+           cerr<<"This file "<< optarg<< " does not exist."<<endl;
+           exit(1);
+        }
+        Parser* parser = new Parser(RpalCode);
+        parser->getAstTree();
+        parser->StandardizeAST();
+        CSE * cse = new CSE ( parser );
+        cse -> Execute ( );
         free(RpalCode);
 }
 

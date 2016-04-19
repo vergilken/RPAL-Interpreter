@@ -33,6 +33,8 @@ class CSE
         int  judgeOrOperator ( int _type1,  int _type2 );
         int judgeAndOperator ( int _type1, int _type2 );
         int judgeValue ( ELEMENT * var1, ELEMENT * var2  );
+        void Stack_Clear ( );
+        void Control_Clear ( );
 
         int m;
 };

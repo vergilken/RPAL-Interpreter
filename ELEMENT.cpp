@@ -221,7 +221,7 @@ void DeltaElement :: print ( ) const
         cout<< Type[type] ;
         return;
     }
-    else if ( type >= PRINT && type <= CONC )
+    else if ( type >= PRINT && type <= NULLFUNCTION )
     {
         cout << InnFunctions[type - 53] ;
         return;

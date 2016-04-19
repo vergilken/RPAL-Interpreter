@@ -5,7 +5,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 /******Test single Rpal programming******/
- #if 0
+ #if 1
     cout << "Hello world!" << endl;
     FILE *RpalCode = fopen("democode","r");
 
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
    #endif
 
 /****************RPAL Translator********************/
-   #if 1
+   #if 0
      int c;
      int option_index = 0;
      static struct option long_options[] = {

@@ -191,7 +191,7 @@ void CSE :: print ( )
 void CSE :: Execute ( )
 {
     Flatern( root );
-    #if 0
+    #if 1
     print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
@@ -200,7 +200,7 @@ void CSE :: Execute ( )
     while ( !Control.empty ( ) )
     {
       CSE_Machine ( );
-    #if 0
+    #if 1
     print ( );
     cout<<endl;
     cout<<"*****************"<<endl;

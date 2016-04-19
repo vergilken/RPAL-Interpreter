@@ -61,13 +61,12 @@ class RecElement : public ELEMENT
 {
     public :
         RecElement ( ) = default;
-        RecElement ( TreeNode * _location, EnvironmentElement * _environment ) : ELEMENT ( Y ), LambdaLocation ( _location ), environment ( _environment ) { };
+        RecElement ( ELEMENT * _lambda) : ELEMENT ( RECELEMENT ), Lambda ( _lambda ){ };
         ~RecElement ( ) { };
         void print ( ) const override;
+        ELEMENT * getLambda ( );
     protected:
-        TreeNode * LambdaLocation;
-        EnvironmentElement * environment;
-
+        ELEMENT * Lambda;
 };
 
 class TauElement : public ELEMENT
@@ -136,6 +135,7 @@ class DeltaElement : public ELEMENT
         ~DeltaElement ( ) { };
         void print ( ) const override;
         int getOption ( ) const;
+        TreeNode * getLocationOpt ( );
     protected :
         TreeNode * location_of_opt;
         int option;

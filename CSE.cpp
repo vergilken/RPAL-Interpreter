@@ -120,9 +120,12 @@ void CSE :: LeftRecusive ( TreeNode * index )
       DeltaElement * Else = new DeltaElement ( index -> LeftChild -> RightSibling -> RightSibling, ELSE );
       Control.push_back ( Then );
       Control.push_back ( Else );
-      OperationElement * belta = new OperationElement ( BETA );
-      Control.push_back ( belta );
+      OperationElement * beta = new OperationElement ( BETA );
+      Control.push_back ( beta );
+      TreeNode * temp = index -> LeftChild -> RightSibling ;
+      index -> LeftChild -> RightSibling = nullptr;
       LeftRecusive( index -> LeftChild );
+      index -> LeftChild -> RightSibling = temp;
       LeftRecusive( index -> RightSibling );
       return;
     }
@@ -169,7 +172,7 @@ void CSE :: print ( )
     auto iter_control = Control.begin ( );
     auto iter_stack = Stack.end( ) - 1;
     cout <<endl;
-    //cout<<"Current Environment is " << count_environment_num ( ) <<endl;
+    cout<<"Current Environment is " << count_environment_num ( ) <<endl;
     cout<< "** CONTROL ** :" << endl;
     for ( ; iter_control != Control.end ( ); ++iter_control )
     {
@@ -525,6 +528,35 @@ void CSE :: CSE_Machine ( )
                  return;
                 }
 
+                case Y :
+                {
+                  delete Stack.back ( );
+                  Stack.back ( ) = nullptr;
+                  Stack.pop_back ( );
+                  if ( Stack.back ( ) -> getType ( ) == LAMBDA )
+                  {
+                      ELEMENT * temp = new RecElement ( Stack.back ( ) );
+                      Stack.pop_back ( );
+                      Stack.push_back ( temp );
+                      return;
+                  }
+                  else
+                  {
+                    cout << "Parse error: \"Expected  Nothing left to parse\", " << "but " <<  (Stack.back ( ) )  -> getValue ( )  << "was there" <<endl;
+                    exit ( 0 );
+                  }
+                }
+
+               case RECELEMENT :
+               {
+                 ELEMENT * temp1 = new OperationElement ( GAMMA );
+                 ELEMENT * temp2 = new OperationElement ( GAMMA );
+                 Control.push_back ( temp1 );
+                 Control.push_back ( temp2 );
+                 Stack.push_back ( ( dynamic_cast<RecElement * > (Stack.back ( ) ) ) -> getLambda ( ) );
+                 return;
+               }
+
 
 
 
@@ -555,7 +587,7 @@ void CSE :: CSE_Machine ( )
                return;
              }
          }
-          cout<<"Unknown id"<<endl;
+          cout<<"Undeclared Identifier <"<<Control.back ( ) -> getValue ( ) <<">" <<endl;
           exit ( 0 );
         }
 
@@ -991,19 +1023,45 @@ void CSE :: CSE_Machine ( )
 
           case BETA :
            {
+             delete Control.back ( );
+             Control.back ( ) = nullptr;
+             Control.pop_back ( );
+             int type = Stack.back ( ) -> getType ( );
+             delete Stack.back ( );
+             Stack.back ( ) = nullptr;
+             Stack.pop_back ( );
 
+             if ( type == TRUE )
+             {
+                 Control.pop_back ( );
+                TreeNode * temp =  ( dynamic_cast<DeltaElement * > ( Control.back ( ) ) ) -> getLocationOpt ( );
+                TreeNode * temp1 = temp -> getRightSibling ( );
+                temp -> RightSibling = nullptr;
+                Control.pop_back ( );
 
+                Flatern( temp );
+                temp -> RightSibling = temp1;
+                return;
+             }
 
+             else if ( type == FALSE )
+             {
+                TreeNode * temp =  ( dynamic_cast<DeltaElement * > ( Control.back ( ) ) ) -> getLocationOpt ( );
+                TreeNode * temp1 = temp ->getRightSibling( );
+                temp -> RightSibling = nullptr ;
+                Control.pop_back ( );
+                Control.pop_back ( );
 
+                Flatern( temp );
+                temp -> RightSibling = temp1;
+                return;
+             }
 
-
-
-
-
-
-
-
-
+             else
+             {
+                cout << "Non-boolean result used in conditional" << endl;
+                exit ( 0 );
+             }
             }
 
 

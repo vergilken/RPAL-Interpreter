@@ -97,9 +97,14 @@ TreeNode * LambdaElement :: getParameter ( )
     return LambdaLocation -> getLeftChild ( );
 }
 
+ELEMENT * RecElement :: getLambda ( )
+{
+    return Lambda;
+}
+
 void RecElement :: print ( ) const
 {
-   cout << "rec ";
+   cout << "lambda closure recursive ";
 }
 
 int TauElement :: get_Num_Tuple ( )
@@ -172,6 +177,11 @@ int DeltaElement :: getOption ( ) const
     return option;
 }
 
+ TreeNode * DeltaElement :: getLocationOpt ( )
+ {
+   return location_of_opt;
+ }
+
 void DeltaElement :: print ( ) const
 {
     cout<<"delta";
@@ -191,6 +201,11 @@ void DeltaElement :: print ( ) const
     }
     switch ( type )
     {
+    case Y :
+        {
+            cout << "Y";
+            return;
+        }
     case BETA :
         {
             cout << "BETA";

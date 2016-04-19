@@ -191,7 +191,7 @@ void CSE :: print ( )
 void CSE :: Execute ( )
 {
     Flatern( root );
-    #if 1
+    #if 0
     print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
@@ -200,7 +200,7 @@ void CSE :: Execute ( )
     while ( !Control.empty ( ) )
     {
       CSE_Machine ( );
-    #if 1
+    #if 0
     print ( );
     cout<<endl;
     cout<<"*****************"<<endl;
@@ -364,8 +364,6 @@ void CSE :: CSE_Machine ( )
                 int type = Stack.back ( ) -> getType ( );
                 if ( type == TRUE || type == FALSE )
                 {
-                 delete Stack.back ( );
-                 Stack.back ( ) = nullptr;
                  Stack.pop_back ( );
                 ELEMENT * temp = new OperationElement ( TRUE );
                 Stack.push_back ( temp );
@@ -661,7 +659,9 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 + num2 );
+            Stack.pop_back ( );
+            ELEMENT * temp = new IntegerElement ( to_string (num1+ num2) );
+            Stack.push_back ( temp );
             return;
         }
 
@@ -676,7 +676,9 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 * num2 );
+            Stack.pop_back ( );
+            ELEMENT * temp = new IntegerElement ( to_string (num1*num2) );
+            Stack.push_back ( temp );
             return;
         }
 
@@ -689,7 +691,9 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 - num2 );
+            Stack.pop_back ( );
+            ELEMENT * temp = new IntegerElement ( to_string (num1- num2) );
+            Stack.push_back ( temp );
             return;
         }
 
@@ -704,7 +708,9 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue ( num1 / num2 );
+            Stack.pop_back ( );
+            ELEMENT * temp = new IntegerElement ( to_string (num1/ num2) );
+            Stack.push_back ( temp );
             return;
         }
 
@@ -719,7 +725,9 @@ void CSE :: CSE_Machine ( )
             Stack.pop_back ( );
             if ( Stack.back ( ) -> getType ( ) !=  INTEGER ) return ;
             num2 =  ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> getIntValue ( );
-             ( dynamic_cast<IntegerElement * > (Stack.back ( ) ) ) -> setIntValue (pow ( num1, num2 ) );
+            Stack.pop_back ( );
+            ELEMENT * temp = new IntegerElement ( to_string ( pow ( num1, num2 ) ) );
+            Stack.push_back ( temp );
             return;
         }
 

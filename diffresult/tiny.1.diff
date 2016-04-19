@@ -1,4 +1,0 @@
-1c1
-< (1, 2, 0, 1)
----
-> Non-boolean result used in conditional
